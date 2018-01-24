@@ -1,2 +1,9 @@
 # C_ToolBox
-Petit tools for C language.
+C言語で使えるちょっとした小道具集
+
+## FileTools.c
+ファイル入出力に関するもろもろ。
+
+## その他のファイル
+Dummy.c --- IDEのプロジェクトエラー抑止。できればなくしたい。
+Typedef.h --- 16,32,64bit環境などとの差異を吸収する目的、環境に合わせて変更すること。
