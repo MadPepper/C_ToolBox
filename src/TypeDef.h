@@ -1,7 +1,7 @@
 /*
  * TypeDef.h
- * @brief	�^�̍Đ錾
- * @note	CO_TARGET_OS_TYPE��ύX���邱�ƂŁA�Ώ�OS��̌^�ƌ݊����̂���`�Ő錾����
+ * @brief	型の再宣言
+ * @note	CO_TARGET_OS_TYPEを変更することで、対象OS上の型と互換性のある形で宣言する
  */
 
 #ifndef TYPEDEF_H_

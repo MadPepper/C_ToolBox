@@ -1,6 +1,6 @@
 /**
  * FileTools.c
- * @brief	�t�@�C�����o�͂Ƃ��f�B���N�g������Ƃ�
+ * @brief	ファイル入出力とかディレクトリ操作とか
  * @note
  */
 
@@ -27,7 +27,7 @@
  * Global Variables
  *------------------------------------------------*/
 /**
- * @brief	�f���~�^������Strcat�ȂǂŎg����悤�Ƀk�������𑫂�������
+ * @brief	デリミタ文字をStrcatなどで使えるようにヌル文字を足したもの
  */
 static const CHAR gacDelimiter[2] = { D_FT_DELIMITER, 0 };
 
@@ -43,12 +43,12 @@ static const CHAR gacDelimiter[2] = { D_FT_DELIMITER, 0 };
  * Global Functions
  *------------------------------------------------*/
 /**
- * @brief		�t�@�C���S�̂��������ɓW�J����
- * @brief		�t�@�C���I�[�v�����t�@�C���T�C�Y���̃o�b�t�@��Malloc���o�b�t�@�Ƀt�@�C�����e��ǂݏo��
- * @param[in]	CHAR *pcFilePath	�W�J����t�@�C���̃p�X
- * @param[out]	CHAR **pcLoadBuffer	�W�J��̃������A�h���X
- * @return		LLONG, ���̒l; �ǂݏo�����T�C�Y, ���̒l; �G���[�R�[�h
- * @note		!!DANGER!! pcLoadBuffer�Ŏ擾�����o�b�t�@�͌�ŕK���J�����邱��
+ * @brief		ファイル全体をメモリに展開する
+ * @brief		ファイルオープン→ファイルサイズ分のバッファをMalloc→バッファにファイル内容を読み出す
+ * @param[in]	CHAR *pcFilePath	展開するファイルのパス
+ * @param[out]	CHAR **pcLoadBuffer	展開先のメモリアドレス
+ * @return		LLONG, 正の値; 読み出したサイズ, 負の値; エラーコード
+ * @note		!!DANGER!! pcLoadBufferで取得したバッファは後で必ず開放すること
  */
 LLONG FT_LoadFile(CHAR *pcFilePath, CHAR **ppcLoadBuffer) {
 	LLONG llRet = 0;
@@ -106,10 +106,10 @@ FILE_CLOSE:
 }
 
 /**
- * @brief		2�̃t�@�C����P����r����
- * @param[in]	CHAR *pcFilePath1	1�ڂ̃t�@�C���p�X
- * @param[in]	CHAR *pcFilePath2	2�ڂ̃t�@�C���p�X
- * @return		LONG, �G���[�R�[�h
+ * @brief		2つのファイルを単純比較する
+ * @param[in]	CHAR *pcFilePath1	1つ目のファイルパス
+ * @param[in]	CHAR *pcFilePath2	2つ目のファイルパス
+ * @return		LONG, エラーコード
  * @note
  */
 LONG FT_CompareFile(CHAR *pcFilePath1, CHAR *pcFilePath2) {
@@ -153,16 +153,16 @@ EXIT:
 }
 
 /**
- * @brief		�����̃f�B���N�g���p�X���擾����[�t�@�C���p�X�������̏ꍇ�͐e�f�B���N�g���̃p�X���擾����]
- * @param[in]	CHAR *pcInputPath	���̃p�X
- * @param[out]	CHAR *pcOutputPath	�T����̃p�X�i�̈�͎����m�ۂł͂Ȃ��j
- * @return		LONG, �G���[�R�[�h
- * 					return -1;	�f�B���N�g���T���Ɏ��s
- * 					return 1;	�e�f�B���N�g���𔭌�
- * 					return 0;	�����͂��łɃf�B���N�g��
- * @note		�t�@�C���p�X������̍ő咷��(D_FT_MAX_FILE_PATH_LEN)
- * @note		�p�X�̃f���~�^��(D_FT_DELIMITER)
- * @note		todo �����񂪍ő咷�𒴂����ꍇ�̏���
+ * @brief		引数のディレクトリパスを取得する[ファイルパスが引数の場合は親ディレクトリのパスを取得する]
+ * @param[in]	CHAR *pcInputPath	元のパス
+ * @param[out]	CHAR *pcOutputPath	探索後のパス（領域は自動確保ではない）
+ * @return		LONG, エラーコード
+ * 					return -1;	ディレクトリ探索に失敗
+ * 					return 1;	親ディレクトリを発見
+ * 					return 0;	引数はすでにディレクトリ
+ * @note		ファイルパス文字列の最大長は(D_FT_MAX_FILE_PATH_LEN)
+ * @note		パスのデリミタは(D_FT_DELIMITER)
+ * @note		todo 文字列が最大長を超えた場合の処理
  */
 LONG FT_GetDirectoryPath(CHAR *pcInputPath, CHAR *pcOutputPath) {
 	DIR *ptDirectory;
@@ -199,16 +199,16 @@ LONG FT_GetDirectoryPath(CHAR *pcInputPath, CHAR *pcOutputPath) {
 }
 
 /**
- * @brief		�f�B���N�g���̓��e��ǂݏo��
- * @param[in]	CHAR *pcDirectoryPath			�f�B���N�g���p�X
- * @param[out]	T_DIR_ENT_ARRAY *ptEntryArray	�f�B���N�g�����e���i�[����\����(�̈�͎����m�ۂł͂Ȃ�)
- * @return		LONG, �G���[�R�[�h
- * @note		�ǂݏo���G���g�����̍ő�l��(D_FT_MAX_ENT_NUM)
- * @note		�t�@�C�����̍ő咷��(FILENAME_MAX) �����Gcc�Ɉˑ�
- * @note		�t�@�C���p�X�̍ő咷��(D_FT_MAX_FILE_PATH_LEN)
- * @note		�t�@�C���p�X�̃f���~�^��(D_FT_DELIMITER)
+ * @brief		ディレクトリの内容を読み出す
+ * @param[in]	CHAR *pcDirectoryPath			ディレクトリパス
+ * @param[out]	T_DIR_ENT_ARRAY *ptEntryArray	ディレクトリ内容を格納する構造体(領域は自動確保ではない)
+ * @return		LONG, エラーコード
+ * @note		読み出すエントリ数の最大値は(D_FT_MAX_ENT_NUM)
+ * @note		ファイル名の最大長は(FILENAME_MAX) これはGccに依存
+ * @note		ファイルパスの最大長は(D_FT_MAX_FILE_PATH_LEN)
+ * @note		ファイルパスのデリミタは(D_FT_DELIMITER)
  * @note		todo Sort by FileName, Size
- * @note		todo �����񂪍ő咷�𒴂����ꍇ�̏���
+ * @note		todo 文字列が最大長を超えた場合の処理
  */
 LONG FT_GetEntriesInDirectory(CHAR *pcDirectoryPath, T_FT_FILES_ARRAY *ptEntryArray) {
 	DIR *ptDirectory;

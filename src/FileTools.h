@@ -1,6 +1,6 @@
 /**
  * FileTools.h
- * @brief	�t�@�C�����o�͂Ƃ��f�B���N�g������Ƃ�
+ * @brief	ファイル入出力とかディレクトリ操作とか
  * @note
  */
 
@@ -15,21 +15,21 @@
 /*------------------------------------------------*
  * Defines/Macros
  *------------------------------------------------*/
-#define D_FT_MAX_ENT_NUM		(1024)				/// �t�H���_���̍ő�G���g�����i����ȏ�͈���Ȃ��j
-#define D_FT_MAX_FILE_PATH_LEN	(512+FILENAME_MAX)	/// �t�@�C���p�X�̍ő咷�i����ȏ�͈���Ȃ��j
-#define D_FT_DELIMITER			('\\')				/// Windows�̃p�X�̃f���~�^
+#define D_FT_MAX_ENT_NUM		(1024)				/// フォルダ内の最大エントリ数（これ以上は扱わない）
+#define D_FT_MAX_FILE_PATH_LEN	(512+FILENAME_MAX)	/// ファイルパスの最大長（これ以上は扱わない）
+#define D_FT_DELIMITER			('\\')				/// Windowsのパスのデリミタ
 
 /*------------------------------------------------*
  * Type definitions
  *------------------------------------------------*/
 /**
- * @brief	�f�B���N�g�����e���i�[���邽�߂̍\����
+ * @brief	ディレクトリ内容を格納するための構造体
  * @note
  */
 typedef struct{
-	ULONG ulCount;													/// �G���g����
-	CHAR aascFileStr[D_FT_MAX_ENT_NUM][FILENAME_MAX];				/// �f�B���N�g����or�t�@�C����
-	CHAR aascFilePathStr[D_FT_MAX_ENT_NUM][D_FT_MAX_FILE_PATH_LEN];	/// �p�X
+	ULONG ulCount;													/// エントリ数
+	CHAR aascFileStr[D_FT_MAX_ENT_NUM][FILENAME_MAX];				/// ディレクトリ名orファイル名
+	CHAR aascFilePathStr[D_FT_MAX_ENT_NUM][D_FT_MAX_FILE_PATH_LEN];	/// パス
 }T_FT_FILES_ARRAY;	///
 
 /*------------------------------------------------*
