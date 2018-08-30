@@ -75,7 +75,7 @@ LLONG FT_LoadFile(CHAR *pcFilePath, CHAR **ppcLoadBuffer) {
 	}
 	*ppcLoadBuffer = (char*) malloc(llPos);
 	if (*ppcLoadBuffer == NULL) {
-		printf("Memory allocation failed.\n");
+		perror("Memory allocation failed.\n");
 		llRet = -4;
 		goto FILE_CLOSE;
 	}
@@ -182,7 +182,7 @@ LONG FT_GetDirectoryPath(CHAR *pcInputPath, CHAR *pcOutputPath) {
 
 		ptDirectory = opendir(acTmpPath);
 		if (ptDirectory == NULL) {
-			printf("Some thing wrong with path %s.\n", acTmpPath);
+			printf("Something wrong with path %s.\n", acTmpPath);
 			return -1;
 		}
 		closedir(ptDirectory);
