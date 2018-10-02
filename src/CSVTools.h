@@ -14,8 +14,8 @@
 /*------------------------------------------------*
  * Defines/Macros
  *------------------------------------------------*/
-#define D_CSV_DELIMITER		(" ")
-#define D_CSV_LINEFEED		("\r\n")
+#define D_CSV_DELIMITER (" ")
+#define D_CSV_LINEFEED ("\r\n")
 
 /*------------------------------------------------*
  * Type definitions
